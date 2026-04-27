@@ -27,15 +27,20 @@ Profile Settings       Customize your name and preferred currency symbol
 Mobile-First           Responsive design optimized for phone screens
 
 
-Technology Stack
-
-Layer                                Technology
-Frontend                    HTML5, CSS3, Vanilla JavaScript
-Charts                            Chart.js v4.4
-Fonts                       DM Sans, DM Mono (Google Fonts)
-Storage                         Browser LocalStorage
-Mobile Packaging            Capacitor (Web → Android APK)
-
+## Frontend
+HTML/CSS/JS dashboard
+Chart.js visualizations
+fetch API for backend communication
+## Backend
+server.js + Express
+REST API endpoints
+in-memory data storage
+## Database
+currently: in-memory object
+limitation: resets on restart
+## Deployment
+frontend: local and (Vercel)
+backend: local Node server
 
 Planned for v2.0
 
