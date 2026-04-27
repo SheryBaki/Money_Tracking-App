@@ -6,6 +6,9 @@
 <title>VisionX — Student Budget Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script>
+const API = "http://localhost:3000";
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
@@ -556,18 +559,38 @@ function setFilter(mode, el) {
 }
 
 // ─── SAVE TRANSACTION ─────────────────────────────────────
-function saveTransaction() {
-  const desc=document.getElementById('f-desc').value.trim();
-  const amount=parseFloat(document.getElementById('f-amount').value);
-  const cat=document.getElementById('f-cat').value;
-  const date=document.getElementById('f-date').value||today();
+async function saveTransaction() {
+  const desc = document.getElementById('f-desc').value.trim();
+  const amount = parseFloat(document.getElementById('f-amount').value);
+  const cat = document.getElementById('f-cat').value;
+  const date = document.getElementById('f-date').value || today();
+
   if(!desc){ notify('Please enter a description','error'); return; }
   if(isNaN(amount)||amount<=0){ notify('Enter a valid amount','error'); return; }
-  state.transactions.unshift({ id:uid(), type:txType, desc, amount, cat, date });
-  save();
+
+  const newTx = {
+    id: uid(),
+    type: txType,
+    desc,
+    amount,
+    cat,
+    date
+  };
+
+
+  await fetch(API + '/transactions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newTx)
+  });
+
+
+  await loadFromBackend();
+
   closeModal('modal-add');
   notify('Transaction saved! ✓','success');
-  renderDashboard();
+
+  renderAll();
 }
 
 // ─── SAVE BUDGET ──────────────────────────────────────────
@@ -808,17 +831,28 @@ function renderAll() {
   renderBudget();
 }
 
+async function loadFromBackend() {
+  const res = await fetch(API + '/data');
+  const backendData = await res.json();
+  state = backendData;
+}
+
 // ─── INIT ─────────────────────────────────────────────────
-function init() {
-  load();
+async function init() {
+  await loadFromBackend();
+
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   const now=new Date();
   document.getElementById('month-pill').textContent=months[now.getMonth()]+' '+now.getFullYear();
   document.getElementById('f-date').value=today();
   updateProfileUI();
   renderDashboard();
-  // Close modals on overlay click
-  document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
+
+  document.querySelectorAll('.overlay').forEach(o=>
+    o.addEventListener('click',e=>{
+      if(e.target===o) o.classList.remove('open');
+    })
+  );
 }
 
 init();
