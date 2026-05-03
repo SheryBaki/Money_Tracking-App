@@ -87,4 +87,7 @@ Go to Settings
 Tap Export as CSV to open in Excel or Google Sheets
 Tap Export as JSON for a complete data backup
 
-
+Team members: 
+230103382     Sherzodbek Saydakhmedov
+230103287     Moldir Kali
+230103032     Aikyn Murzagaliyev
